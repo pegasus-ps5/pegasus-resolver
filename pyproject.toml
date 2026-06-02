@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pegasus-resolver"
+version = "0.1.0"
+description = "Backend-only provider resolver for Pegasus DL."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "scrapling[fetchers]>=0.4.8,<0.5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.7",
+]
+
+[project.scripts]
+pegasus-resolver = "pegasus_resolver.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["pegasus_resolver"]
