@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from .akirabox import AkiraBoxProvider
 from .base import Provider
+from .buzzheavier import BuzzHeavierProvider
 from .datanodes import DataNodesProvider
 from .vikingfile import VikingFileProvider
 
 
 PROVIDERS: tuple[Provider, ...] = (
     AkiraBoxProvider(),
+    BuzzHeavierProvider(),
     DataNodesProvider(),
     VikingFileProvider(),
 )

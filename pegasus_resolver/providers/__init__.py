@@ -10,6 +10,15 @@ from .akirabox import (
     akirabox_storage_url,
 )
 from .base import Provider, ResolveError, ResolvedDownload
+from .buzzheavier import (
+    BuzzHeavierPageParser,
+    BuzzHeavierProvider,
+    buzzheavier_download_href_from_page,
+    buzzheavier_file_name_from_page,
+    buzzheavier_hx_redirect,
+    buzzheavier_page_from_page,
+    buzzheavier_redirect_from_fetch_result,
+)
 from .datanodes import (
     DataNodesDownloadForm,
     DataNodesPageParser,
@@ -40,6 +49,8 @@ from .vikingfile import DownloadLinkParser, VikingFileProvider, download_href_fr
 __all__ = [
     "AkiraBoxPageParser",
     "AkiraBoxProvider",
+    "BuzzHeavierPageParser",
+    "BuzzHeavierProvider",
     "DataNodesDownloadForm",
     "DataNodesPageParser",
     "DataNodesProvider",
@@ -55,6 +66,11 @@ __all__ = [
     "akirabox_referer_from_page",
     "akirabox_request_headers",
     "akirabox_storage_url",
+    "buzzheavier_download_href_from_page",
+    "buzzheavier_file_name_from_page",
+    "buzzheavier_hx_redirect",
+    "buzzheavier_page_from_page",
+    "buzzheavier_redirect_from_fetch_result",
     "cookie_names_for_log",
     "datanodes_cookies",
     "datanodes_download_form_from_html",

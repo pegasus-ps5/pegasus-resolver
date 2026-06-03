@@ -8,11 +8,16 @@ from urllib.parse import parse_qs, quote
 
 from pegasus_resolver.providers import (
     AkiraBoxProvider,
+    BuzzHeavierProvider,
     DataNodesProvider,
+    ResolveError,
     akirabox_cookies,
     akirabox_download_href_from_page,
     akirabox_referer_from_page,
     akirabox_storage_url,
+    buzzheavier_download_href_from_page,
+    buzzheavier_file_name_from_page,
+    buzzheavier_redirect_from_fetch_result,
     datanodes_download_form_from_html,
     datanodes_post_download_url,
     expires_at_from_url,
@@ -121,6 +126,62 @@ class AkiraBoxProviderTest(unittest.TestCase):
             server.shutdown()
             thread.join()
             server.server_close()
+
+
+class BuzzHeavierProviderTest(unittest.TestCase):
+    def test_provider_matches_buzzheavier_hosts(self) -> None:
+        provider = provider_for_url("https://buzzheavier.com/3ubz1znu5hwv")
+        self.assertIsInstance(provider, BuzzHeavierProvider)
+        self.assertIs(provider_for_url("https://bzzhr.co/3ubz1znu5hwv"), provider)
+        self.assertIs(provider_for_url("https://bzzhr.to/3ubz1znu5hwv"), provider)
+
+    def test_page_parser_finds_signed_download_link_and_filename(self) -> None:
+        page = DummyPage(
+            """
+            <title>Example File.pkg</title>
+            <a hx-get="/ignored/preview?t=abc">Preview</a>
+            <a class="link-button" hx-get="/3ubz1znu5hwv/download?t=abc&amp;sig=1">
+              Server 1
+            </a>
+            <a class="link-button" hx-get="/3ubz1znu5hwv/download?t=abc&amp;alt=true">
+              Server 2
+            </a>
+            """
+        )
+
+        self.assertEqual(
+            buzzheavier_download_href_from_page(page),
+            "/3ubz1znu5hwv/download?t=abc&sig=1",
+        )
+        self.assertEqual(buzzheavier_file_name_from_page(page), "Example File.pkg")
+
+    def test_page_parser_prefers_meta_title_filename(self) -> None:
+        page = DummyPage(
+            """
+            <title>Fallback.pkg</title>
+            <meta name="title" content="Meta File.pkg">
+            <a hx-get="/3ubz1znu5hwv/download?t=abc">Server 1</a>
+            """
+        )
+
+        self.assertEqual(buzzheavier_file_name_from_page(page), "Meta File.pkg")
+
+    def test_redirect_parser_reads_hx_redirect_header(self) -> None:
+        self.assertEqual(
+            buzzheavier_redirect_from_fetch_result(
+                {
+                    "status": 204,
+                    "headers": {
+                        "hx-redirect": "https://fafda.to/d/3ubz1znu5hwv?v=token",
+                    },
+                }
+            ),
+            "https://fafda.to/d/3ubz1znu5hwv?v=token",
+        )
+
+    def test_redirect_parser_requires_hx_redirect_header(self) -> None:
+        with self.assertRaises(ResolveError):
+            buzzheavier_redirect_from_fetch_result({"status": 204, "headers": {}})
 
 
 class DataNodesProviderTest(unittest.TestCase):

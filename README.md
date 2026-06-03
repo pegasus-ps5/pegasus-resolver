@@ -22,6 +22,7 @@ download itself. Pegasus Resolver only helps with supported provider links.
 | Provider | Hosts |
 | --- | --- |
 | AkiraBox | `akirabox.com`, `akirabox.to` |
+| BuzzHeavier | `buzzheavier.com`, `bzzhr.co`, `bzzhr.to` |
 | DataNodes | `datanodes.to` |
 | VikingFile | `vik1ngfile.site`, `vikingfile.com` |
 
